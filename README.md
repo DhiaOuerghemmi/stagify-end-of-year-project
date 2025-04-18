@@ -1,1 +1,0 @@
-# stagify-end-of-year-project
