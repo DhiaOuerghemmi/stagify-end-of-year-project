@@ -8,18 +8,18 @@ const AppliedJobTable = () => {
     return (
         <div>
             <Table>
-                <TableCaption>A list of your applied jobs</TableCaption>
+                <TableCaption>A list of your applied Internships</TableCaption>
                 <TableHeader>
                     <TableRow>
                         <TableHead>Date</TableHead>
-                        <TableHead>Job Role</TableHead>
+                        <TableHead>Internship Role</TableHead>
                         <TableHead>Company</TableHead>
                         <TableHead className="text-right">Status</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
                     {
-                        allAppliedJobs.length <= 0 ? <span>You haven't applied any job yet.</span> : allAppliedJobs.map((appliedJob) => (
+                        allAppliedJobs.length <= 0 ? <span>You haven't applied any Internship yet.</span> : allAppliedJobs.map((appliedJob) => (
                             <TableRow key={appliedJob._id}>
                                 <TableCell>{appliedJob?.createdAt?.split("T")[0]}</TableCell>
                                 <TableCell>{appliedJob.job?.title}</TableCell>
