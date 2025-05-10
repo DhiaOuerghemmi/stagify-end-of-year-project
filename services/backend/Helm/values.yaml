@@ -1,0 +1,19 @@
+replicaCount: 1
+
+image:
+  repository: YOUR_ECR_REPO/stagify-backend # ✏️ TODO: set your registry
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 3000
+
+ingress:
+  enabled: false
+  annotations: {}
+  hosts:
+    - host: backend.stagify.example.com    # ✏️ TODO: set domain
+      paths:
+        - path: /
+          pathType: Prefix
