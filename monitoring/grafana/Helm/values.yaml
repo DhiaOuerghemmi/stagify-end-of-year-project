@@ -1,0 +1,13 @@
+adminUser: admin
+adminPassword: admin        # ✏️ TODO: override via secret in production
+
+service:
+  type: ClusterIP
+  port: 3000
+
+ingress:
+  enabled: false
+
+dashboardsConfigMaps:
+  - cluster-metrics
+  - application-metrics

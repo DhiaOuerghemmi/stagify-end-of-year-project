@@ -1,0 +1,5 @@
+{
+    "annotations": { "list": [] },
+    "panels": [ /* … a JSON dashboard definition tracking cluster CPU, mem, pod counts… */ ]
+  }
+  

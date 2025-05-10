@@ -1,0 +1,22 @@
+serviceAccount:
+  create: true
+  name: prometheus-sa
+
+alertmanager:
+  enabled: false
+
+server:
+  global:
+    scrape_interval: 15s
+  persistentVolume:
+    enabled: false
+  service:
+    type: ClusterIP
+    port: 9090
+
+scrapeConfigs:
+  - job_name: 'kubernetes-apiservers'
+    kubernetes_sd_configs:
+      - role: endpoints
+
+# ✏️ Add other scrape jobs as needed
