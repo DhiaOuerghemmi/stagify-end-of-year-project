@@ -1,0 +1,5 @@
+bases:
+  - ../../base
+namespace: stagify
+patchesStrategicMerge:
+  - replica-count.yaml  # define patch to set replicas for dev

@@ -1,0 +1,15 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stagify-backend
+  namespace: stagify
+spec:
+  replicas: 2           # ✏️ STAGING: moderate scale
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stagify-frontend
+  namespace: stagify
+spec:
+  replicas: 2

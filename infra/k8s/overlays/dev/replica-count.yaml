@@ -1,0 +1,15 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stagify-backend
+  namespace: stagify
+spec:
+  replicas: 1           # ✏️ DEV: Keep minimal for cost savings
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stagify-frontend
+  namespace: stagify
+spec:
+  replicas: 1
