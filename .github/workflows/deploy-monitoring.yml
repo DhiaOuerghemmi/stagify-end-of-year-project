@@ -1,0 +1,37 @@
+name: Deploy – Monitoring
+
+on:
+  push:
+    paths:
+      - 'monitoring/**'
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Helm
+        uses: azure/setup-helm@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{ secrets.MONITORING_IAM_ROLE_ARN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Deploy Prometheus chart
+        run: |
+          helm upgrade --install prometheus monitoring/prometheus/helm-chart \
+            --namespace monitoring \
+            --create-namespace \
+            -f monitoring/prometheus/helm-chart/values.yaml
+
+      - name: Deploy Grafana chart
+        run: |
+          helm upgrade --install grafana monitoring/grafana/helm-chart \
+            --namespace monitoring \
+            -f monitoring/grafana/helm-chart/values.yaml

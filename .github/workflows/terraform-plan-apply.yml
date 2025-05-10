@@ -1,0 +1,58 @@
+name: Terraform – Plan & Apply
+
+on:
+  pull_request:
+    paths:
+      - 'infrastructure/terraform/**'
+  push:
+    branches:
+      - main
+    paths:
+      - 'infrastructure/terraform/**'
+
+jobs:
+  terraform:
+    runs-on: ubuntu-latest
+    env:
+      TF_IN_AUTOMATION: true
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.3.9       # ✏️ TODO: choose your required version
+
+      - name: Terraform Init
+        run: |
+          cd infrastructure/terraform/envs/${{ github.event.inputs.environment || 'dev' }}
+          terraform init -backend-config=backend.tfvars
+
+      - name: Terraform Format
+        run: |
+          cd infrastructure/terraform/envs/${{ github.event.inputs.environment || 'dev' }}
+          terraform fmt -check
+
+      - name: Terraform Validate
+        run: |
+          cd infrastructure/terraform/envs/${{ github.event.inputs.environment || 'dev' }}
+          terraform validate
+
+      - name: Terraform Plan
+        id: plan
+        run: |
+          cd infrastructure/terraform/envs/${{ github.event.inputs.environment || 'dev' }}
+          terraform plan -var-file=terraform.tfvars -out=tfplan
+
+      - name: Comment Plan (PR only)
+        if: github.event_name == 'pull_request'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          path: infrastructure/terraform/envs/${{ github.event.inputs.environment || 'dev' }}/tfplan
+
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main'
+        run: |
+          cd infrastructure/terraform/envs/${{ github.event.inputs.environment || 'dev' }}
+          terraform apply -auto-approve tfplan

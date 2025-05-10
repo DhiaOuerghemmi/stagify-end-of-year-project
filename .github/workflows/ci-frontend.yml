@@ -1,0 +1,52 @@
+name: CI – Frontend
+
+on:
+  push:
+    paths:
+      - "services/frontend/**"
+    branches: [develop, main]
+  pull_request:
+    paths:
+      - "services/frontend/**"
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: "18" # ✏️ TODO: match your Dockerfile
+
+      - name: Install dependencies
+        run: |
+          cd services/frontend
+          npm ci
+
+      - name: Run tests
+        run: |
+          cd services/frontend
+          npm test
+
+      - name: Build Docker image
+        run: |
+          cd services/frontend
+          docker build -t ${{ secrets.ECR_REPOSITORY_FRONTEND }}:${{ github.sha }} .
+
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v1
+        with:
+          region: ${{ secrets.AWS_REGION }}
+
+      - name: Push to ECR
+        run: |
+          docker tag ${{ secrets.ECR_REPOSITORY_FRONTEND }}:${{ github.sha }} \
+            ${{ secrets.ECR_REPOSITORY_FRONTEND }}:latest
+          docker push ${{ secrets.ECR_REPOSITORY_FRONTEND }}:${{ github.sha }}
+          docker push ${{ secrets.ECR_REPOSITORY_FRONTEND }}:latest
+
+      - name: Output image digest
+        run: echo "::set-output name=image::$${{ secrets.ECR_REPOSITORY_FRONTEND }}@sha256:$(docker inspect --format='{{index .RepoDigests 0}}' ${{ secrets.ECR_REPOSITORY_FRONTEND }}:latest)"
